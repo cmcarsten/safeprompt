@@ -45,7 +45,7 @@ BLOCK →  hard block with explanation, user must edit before sending
 Clone this repo or download and unzip it:
 
 ```bash
-git clone https://github.com/your-username/safeprompt.git
+git clone https://github.com/cmcarsten/safeprompt
 ```
 
 ### Step 2 — Load into Chrome
