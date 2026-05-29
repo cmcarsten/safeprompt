@@ -81,7 +81,7 @@ You should see the SafePrompt block overlay appear before the message sends.
 
 ## What Gets Detected
 
-SafePrompt ships with a baseline ruleset covering the several common risks. However, the baseline rules are intended as a starting point rather than a comprehensive policy. Every organization is different and risks evolve — the rules are designed to be easy to update and extend so you can tailor them to your specific use cases.
+SafePrompt ships with a baseline ruleset covering several common risks. However, the baseline rules are intended as a starting point rather than a comprehensive policy. Every organization is different and risks evolve — the rules are designed to be easy to update and extend so you can tailor them to your specific use cases.
 
 | Rule | What it catches | Score |
 |------|----------------|-------|
@@ -176,7 +176,7 @@ After any changes reload the extension at `chrome://extensions` then refresh you
 
 ## What's Next
 
-SafePrompt v1 covers the most common risk — sensitive text typed directly into an AI prompt. If there's interest from the community, a **v2 cloud edition** is planned that would add:
+SafePrompt v1 covers the several common risks — sensitive text typed directly into an AI prompt. If there's interest from the community, a **v2 cloud edition** is planned that would add:
 
 - 📄 **Document scanning** — detect sensitive content in files before they are uploaded to AI tools
 - 🏢 **Team dashboard** — centralised visibility across an organisation
