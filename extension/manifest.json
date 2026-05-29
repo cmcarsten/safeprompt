@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "SafePrompt — LLM Firewall",
+  "version": "2.0.0",
+  "description": "Prevents sensitive data and prompt injection from reaching AI chat tools. Works locally with no backend required.",
+
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*"
+      ],
+      "js": ["rules.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "panel.html",
+    "default_title": "SafePrompt Firewall",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
