@@ -176,7 +176,7 @@ After any changes reload the extension at `chrome://extensions` then refresh you
 
 ## What's Next
 
-SafePrompt v1 covers the several common risks — sensitive text typed directly into an AI prompt. If there's interest from the community, a **v2 cloud edition** is planned that would add:
+If there's interest from the community, a **v2 cloud edition** is planned that would add:
 
 - 📄 **Document scanning** — detect sensitive content in files before they are uploaded to AI tools
 - 🏢 **Team dashboard** — centralised visibility across an organisation
