@@ -8,7 +8,7 @@ A lightweight Chrome extension that intercepts prompts before they reach AI chat
 
 ## The Problem
 
-Employees and professionals are increasingly using AI chat tools for everyday work. In doing so, they often inadvertently include sensitive information in their prompts — client SSNs, API keys, privileged legal content, credentials — without realising the risk. SafePrompt sits between the user and the AI, quietly checking every prompt before it's sent.
+Employees and professionals are increasingly using AI chat tools for everyday work. In doing so, they often inadvertently include sensitive information in their prompts — client SSNs, API keys, privileged legal content, credentials — without realizing the risk. SafePrompt sits between the user and the AI, quietly checking every prompt before it's sent.
 
 ---
 
@@ -81,7 +81,7 @@ You should see the SafePrompt block overlay appear before the message sends.
 
 ## What Gets Detected
 
-SafePrompt ships with a baseline ruleset covering several common risks. However, the baseline rules are intended as a starting point rather than a comprehensive policy. Every organization is different and risks evolve — the rules are designed to be easy to update and extend so you can tailor them to your specific use cases.
+SafePrompt ships with a baseline ruleset covering several common risks. However, the baseline rules are intended as a starting point rather than a comprehensive policy. Every organization is different and risks evolve, so the rules are designed to be easy to update and extend so you can tailor them to your specific use cases.
 
 | Rule | What it catches | Score |
 |------|----------------|-------|
@@ -179,7 +179,7 @@ After any changes reload the extension at `chrome://extensions` then refresh you
 If there's interest from the community, a **v2 cloud edition** is planned that would add:
 
 - 📄 **Document scanning** — detect sensitive content in files before they are uploaded to AI tools
-- 🏢 **Team dashboard** — centralised visibility across an organisation
+- 🏢 **Team dashboard** — centralised visibility across an organization
 - 📋 **Compliance reporting** — audit logs formatted for HIPAA, SOC2, and legal review
 - 🔔 **Admin alerts** — notify security teams when high-risk prompts are blocked
 - ⚙️ **Centralised rule management** — manage rules across all users from one place
