@@ -1,7 +1,7 @@
 /**
  * SafePrompt — panel.js
- * Popup UI logic. Reads results from chrome.storage, renders decision
- * and audit log, manages settings.
+ * Popup UI logic. Reads results from chrome.storage, renders
+ * the decision card and audit log, handles settings.
  */
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -13,7 +13,9 @@ function escHtml(str) {
 }
 
 function fmtTime(ts) {
-  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  return new Date(ts).toLocaleTimeString([], {
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
 }
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -29,7 +31,7 @@ document.querySelectorAll('.tab').forEach(btn => {
 
 // ── Decision card ─────────────────────────────────────────────────────────────
 
-function renderDecision({ decision, score, triggeredRules, elapsed, source, prompt, ts }) {
+function renderDecision({ decision, score, triggeredRules, elapsed, prompt, ts }) {
   document.getElementById('decisionEmpty').style.display = 'none';
   const card = document.getElementById('decisionCard');
   card.style.display = 'block';
@@ -65,12 +67,12 @@ function renderDecision({ decision, score, triggeredRules, elapsed, source, prom
             <span class="meta-value">${elapsed}ms</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Source</span>
-            <span class="meta-value">${source || 'local'}</span>
-          </div>
-          <div class="meta-item">
             <span class="meta-label">Rules fired</span>
             <span class="meta-value">${triggeredRules ? triggeredRules.length : 0}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Mode</span>
+            <span class="meta-value">local</span>
           </div>
         </div>
         <div class="meta-label" style="margin-bottom:6px;">triggered rules</div>
@@ -101,45 +103,7 @@ function prependAuditEntry({ decision, score, triggeredRules, elapsed, prompt, t
   document.getElementById('auditList').prepend(item);
 }
 
-function renderAuditLog(log) {
-  if (!log || !log.length) return;
-  document.getElementById('auditEmpty').style.display = 'none';
-  [...log].reverse().forEach(entry => prependAuditEntry(entry));
-}
-
 // ── Settings ──────────────────────────────────────────────────────────────────
-
-const toggle      = document.getElementById('useCloudToggle');
-const cloudFields = document.getElementById('cloudFields');
-const modeBadge   = document.getElementById('modeBadge');
-
-function updateModeDisplay(useCloud) {
-  cloudFields.classList.toggle('hidden', !useCloud);
-  modeBadge.textContent = useCloud ? 'cloud' : 'local';
-  modeBadge.className   = `mode-badge ${useCloud ? 'cloud' : 'local'}`;
-}
-
-toggle.addEventListener('change', () => updateModeDisplay(toggle.checked));
-
-// Load saved settings
-chrome.storage.local.get(['useCloud', 'cloudUrl', 'cloudKey'], (data) => {
-  toggle.checked = !!data.useCloud;
-  if (data.cloudUrl) document.getElementById('cloudUrl').value = data.cloudUrl;
-  if (data.cloudKey) document.getElementById('cloudKey').value = data.cloudKey;
-  updateModeDisplay(!!data.useCloud);
-});
-
-document.getElementById('saveBtn').addEventListener('click', () => {
-  chrome.storage.local.set({
-    useCloud: toggle.checked,
-    cloudUrl: document.getElementById('cloudUrl').value.trim().replace(/\/$/, ''),
-    cloudKey: document.getElementById('cloudKey').value.trim(),
-  }, () => {
-    const el = document.getElementById('saveConfirm');
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 2000);
-  });
-});
 
 document.getElementById('clearAuditBtn').addEventListener('click', () => {
   chrome.storage.local.set({ auditLog: [], lastFirewallResult: null }, () => {
@@ -150,14 +114,16 @@ document.getElementById('clearAuditBtn').addEventListener('click', () => {
   });
 });
 
-// ── Load existing data ────────────────────────────────────────────────────────
+// ── Load existing data + watch for updates ────────────────────────────────────
 
 chrome.storage.local.get(['lastFirewallResult', 'auditLog'], ({ lastFirewallResult, auditLog }) => {
   if (lastFirewallResult) renderDecision(lastFirewallResult);
-  if (auditLog && auditLog.length) renderAuditLog(auditLog);
+  if (auditLog && auditLog.length) {
+    document.getElementById('auditEmpty').style.display = 'none';
+    [...auditLog].reverse().forEach(entry => prependAuditEntry(entry));
+  }
 });
 
-// Watch for new results while popup is open
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.lastFirewallResult?.newValue) {
     renderDecision(changes.lastFirewallResult.newValue);

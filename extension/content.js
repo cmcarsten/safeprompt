@@ -2,29 +2,9 @@
  * SafePrompt — content.js
  *
  * Injected into ChatGPT and Claude.ai. Intercepts prompt submission,
- * runs the local rules engine,
- * then passes, warns, or blocks the prompt.
+ * runs the local rules engine, then passes, warns, or blocks the prompt.
+ * All evaluation happens in the browser — no data is sent anywhere.
  */
-
-// ── Config ────────────────────────────────────────────────────────────────────
-
-// Loaded from chrome.storage on init — set via the Settings panel
-let USE_CLOUD   = false;
-let CLOUD_URL   = '';
-let CLOUD_KEY   = '';
-
-chrome.storage.local.get(['useCloud', 'cloudUrl', 'cloudKey'], (data) => {
-  USE_CLOUD = data.useCloud  || false;
-  CLOUD_URL = data.cloudUrl  || '';
-  CLOUD_KEY = data.cloudKey  || '';
-});
-
-// Keep in sync if user changes settings while page is open
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.useCloud)  USE_CLOUD = changes.useCloud.newValue;
-  if (changes.cloudUrl)  CLOUD_URL = changes.cloudUrl.newValue;
-  if (changes.cloudKey)  CLOUD_KEY = changes.cloudKey.newValue;
-});
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
@@ -42,7 +22,7 @@ function broadcastResult(payload) {
     log.push({ ...payload, ts: Date.now() });
     if (log.length > 100) log.splice(0, log.length - 100);
     chrome.storage.local.set({
-      auditLog,
+      auditLog: log,
       lastFirewallResult: { ...payload, ts: Date.now() },
     });
   });
@@ -51,49 +31,15 @@ function broadcastResult(payload) {
 // ── Firewall check ────────────────────────────────────────────────────────────
 
 async function checkPrompt(promptText) {
-  const start = Date.now();
-
-  // Local mode — run rules engine directly in the browser
-  if (!USE_CLOUD || !CLOUD_URL) {
-    const result   = evaluate(promptText); // from rules.js
-    const elapsed  = Date.now() - start;
-    return {
-      decision:       result.decision,
-      score:          result.score,
-      triggeredRules: result.triggeredRules,
-      elapsed,
-      source:         'local',
-    };
-  }
-
-  // Cloud mode — call the Lambda backend
-  const requestId = Math.random().toString(36).slice(2, 10);
-  const headers   = { 'Content-Type': 'application/json' };
-  if (CLOUD_KEY) headers['x-api-key'] = CLOUD_KEY;
-
-  const res = await fetch(`${CLOUD_URL}/v1/chat/completions`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      model:    'gpt-4o-mini',
-      messages: [{ role: 'user', content: promptText }],
-    }),
-  });
-
+  const start    = Date.now();
+  const result   = evaluate(promptText); // from rules.js
   const elapsed  = Date.now() - start;
-  const decision = res.headers.get('X-Firewall-Decision') || (res.status === 403 ? 'deny' : 'pass');
-  const score    = parseInt(res.headers.get('X-Firewall-Risk-Score') || '0');
-  const ruleIds  = (res.headers.get('X-Firewall-Triggered-Rules') || '').split(',').filter(Boolean);
-  const reqId    = res.headers.get('X-Firewall-Request-Id') || requestId;
-
-  let body = {};
-  try { body = await res.json(); } catch (_) {}
-
-  const triggeredRules = (body.triggered_rules || ruleIds).map(r =>
-    typeof r === 'string' ? { id: r, description: r, score: 0 } : r
-  );
-
-  return { decision, score, triggeredRules, elapsed, reqId, source: 'cloud' };
+  return {
+    decision:       result.decision,
+    score:          result.score,
+    triggeredRules: result.triggeredRules,
+    elapsed,
+  };
 }
 
 // ── Overlay UI ────────────────────────────────────────────────────────────────
@@ -150,9 +96,7 @@ function showOverlay({ decision, score, triggeredRules, elapsed, source, prompt,
             ${c.label}
           </span>
           <span style="font-size:11px;color:#6b6b80;">score: ${score}</span>
-          <span style="font-size:10px;color:#6b6b80;letter-spacing:1px;">
-            ${elapsed}ms · ${source}
-          </span>
+          <span style="font-size:10px;color:#6b6b80;letter-spacing:1px;">${elapsed}ms</span>
         </div>
         <span style="font-size:10px;color:#6b6b80;letter-spacing:1px;text-transform:uppercase;">
           SafePrompt
