@@ -102,7 +102,7 @@ Scores are additive. A prompt matching two rules scoring 40 each totals 80 and i
 
 ---
 
-## Customising Rules
+## Customizing Rules
 
 All rules live in `extension/rules.js`. The file is heavily commented to guide you through adding your own.
 
