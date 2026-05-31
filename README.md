@@ -179,10 +179,10 @@ After any changes reload the extension at `chrome://extensions` then refresh you
 If there's interest from the community, a **v2 cloud edition** is planned that would add:
 
 - 📄 **Document scanning** — detect sensitive content in files before they are uploaded to AI tools
-- 🏢 **Team dashboard** — centralised visibility across an organization
+- 🏢 **Team dashboard** — centralized visibility across an organization
 - 📋 **Compliance reporting** — audit logs formatted for HIPAA, SOC2, and legal review
 - 🔔 **Admin alerts** — notify security teams when high-risk prompts are blocked
-- ⚙️ **Centralised rule management** — manage rules across all users from one place
+- ⚙️ **Centralized rule management** — manage rules across all users from one place
 
 If any of these features would be useful to you, open an issue or leave a star — it helps gauge interest.
 
